@@ -1,0 +1,11 @@
+# Ignore website codebase.
+/web*
+
+# Ignore Vagrant files.
+.vagrant/
+
+# Ignore vendor folder
+/vendor/*
+
+# Ignore dashboard directory
+/dashboard/

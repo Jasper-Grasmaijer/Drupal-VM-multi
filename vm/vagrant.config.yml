@@ -1,0 +1,93 @@
+---
+# Local Vagrant options.
+vagrant_hostname: hostens.dev
+vagrant_machine_name: hostens_dev
+vagrant_ip: 192.168.88.11
+
+# Configure the synced folder. -> this is the folder where all the Drupal VM
+# files will recide. In config.yml is the entry for the Drupal files (drupal_core_path).
+vagrant_synced_folders:
+  - local_path: .
+    destination: /var/www/hostens
+    type: nfs
+    create: true
+
+  - local_path: ~/WebDev/Sites/hostens/webkkhut
+    destination: /var/www/hostens/webkkhut
+    type: nfs
+    create: true
+
+  - local_path: ~/WebDev/Sites/hostens/webtrekkingpai
+    destination: /var/www/hostens/webtrekkingpai
+    type: nfs
+    create: true
+
+# Nginx hosts.
+nginx_hosts:
+  # drupal_domain = vagrant_hostname. so set this to kkhut.dev? -> nee dashboard etc. werkt dan niet
+  # remove 1st entry because no website and if its not neccesarry for the rest it can be removed
+  - server_name: "{{ drupal_domain }} www.{{ drupal_domain }}"
+    root: "{{ drupal_core_path }}"
+    is_php: true
+
+  - server_name: "kkhut.dev www.kkhut.dev"
+    root: "/var/www/hostens/webkkhut"
+    is_php: true
+
+  - server_name: "trekkingpai.dev www.trekkingpai.dev"
+    root: "/var/www/hostens/webtrekkingpai"
+    is_php: true
+
+  - server_name: "adminer.{{ vagrant_hostname }}"
+    root: "{{ adminer_install_dir }}"
+    is_php: true
+
+  - server_name: "xhprof.{{ vagrant_hostname }}"
+    root: "{{ php_xhprof_html_dir }}"
+    is_php: true
+
+  - server_name: "pimpmylog.{{ vagrant_hostname }}"
+    root: "{{ pimpmylog_install_dir }}"
+    is_php: true
+
+  - server_name: "{{ vagrant_ip }} dashboard.{{ vagrant_hostname }}"
+    root: "{{ dashboard_install_dir }}"
+    is_php: true
+
+# MYSQL
+mysql_databases:
+  - name: "{{ drupal_db_name }}"
+    encoding: utf8mb4
+    collation: utf8mb4_general_ci
+
+  - name: "kkhut"
+    encoding: utf8mb4
+    collation: utf8mb4_general_ci
+
+  - name: "trekkingpai"
+    encoding: utf8mb4
+    collation: utf8mb4_general_ci
+
+# Undo some of the extra-hardened security settings in config.yml.
+drupal_account_pass: admin
+drupal_db_password: drupal
+mysql_root_password: root
+
+php_sendmail_path: "/opt/mailhog/mhsendmail"
+installed_extras:
+  - drush
+  - mailhog
+  - pimpmylog
+  - adminer
+
+dashboard_install_dir: /var/www/hostens/dashboard
+extra_security_enabled: false
+
+firewall_allowed_tcp_ports:
+  - "22"
+  - "25"
+  - "80"
+  - "81"
+  - "443"
+  - "8025"
+firewall_log_dropped_packets: false

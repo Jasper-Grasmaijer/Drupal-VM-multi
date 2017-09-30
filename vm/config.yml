@@ -1,0 +1,53 @@
+---
+# Composer project settings. -> disable composer
+drupal_build_composer_project: false
+drupal_build_composer: false
+drupal_composer_dependencies: []
+
+# Drupal install settings.
+drupal_site_name: "hostens"
+drupal_core_path: "/var/www/hostens/webhostens"
+drupal_install_site: true
+
+# drupal_site_name: "kkhut"
+# drupal_core_path: "/var/www/hostens/webkkhut"
+# drupal_install_site: true
+
+# drupal_site_name: "trekkingpai"
+# drupal_core_path: "/var/www/hostens/webtrekkingpai"
+# drupal_install_site: true
+
+drupalvm_cron_jobs:
+  - name: "Drupal Cron"
+    minute: "*/15"
+    job: "{{ drush_path }} -r {{ drupal_core_path }} core-cron --quiet"
+
+# The web server software to use. Can be either 'apache' or 'nginx'.
+drupalvm_webserver: nginx
+
+# Other overrides.
+php_sendmail_path: "/usr/sbin/sendmail -t -i"
+installed_extras:
+  - drush
+
+# Other secure defaults.
+dashboard_install_dir: ''
+
+# Enable a more hardened security configuration.
+# See https://github.com/geerlingguy/drupal-vm/tree/master/provisioning/roles
+# /geerlingguy.security chapter Role Variables for default settings which cab be
+# overridden here.
+# I did not change security_ssh_port: 22 because os e.g. AppAmor see: https://
+# security.stackexchange.com/questions/32308/should-i-change-the-default-ssh-
+# port-on-linux-servers
+extra_security_enabled: true
+security_autoupdate_blacklist: "linux-image"
+security_autoupdate_mail_to: "jazzper23@gmail.com"
+
+# Restrict the firewall to only ports that are required for external services.
+firewall_allowed_tcp_ports:
+  - "22"
+  - "80"
+  # 4443 enabble for HTTPS.
+  - "443"
+firewall_log_dropped_packets: true
